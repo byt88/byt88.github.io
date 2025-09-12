@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BYT BOT — Control Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "JetBrains Mono", monospace;
+      background: #0b0b0b;
+      color: #e0e0e0;
+    }
+    header { background: #111; border-bottom: 1px solid #222; }
+    .btn {
+      background:#0f0f0f;
+      border:1px solid #222;
+      border-radius:.5rem;
+      padding:.5rem 1rem;
+      font-size:.9rem;
+      transition:.2s;
+    }
+    .btn:hover { background:#161616; border-color:#666; color:#ddd; }
+    .btn.active { border-color:#888; background:#1a1a1a; }
+    .tab { display:none; }
+    .tab.active { display:block; }
+    .card {
+      background:#111d;
+      border:1px solid #222;
+      border-radius:.75rem;
+      padding:1rem;
+    }
+    .commands-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .cmd-card {
+      background: #0f0f0fdd;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-size: .9rem;
+      color: #ddd;
+      transition: all .2s ease;
+    }
+    .cmd-card:hover {
+      border-color: #666;
+      box-shadow: 0 0 12px rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    .section-bg {
+      background-size: cover;
+      background-position: center;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .section-bg::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.7);
+    }
+    .section-bg > * {
+      position:relative;
+      z-index:1;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-xl md:text-2xl font-bold">BYT BOT HUB</h1>
+      <nav class="flex flex-wrap gap-2">
+        <button class="btn tablink active" data-tab="home">Home</button>
+        <button class="btn tablink" data-tab="commands">Commands</button>
+        <button class="btn tablink" data-tab="imggen">IMG Generator</button>
+        <button class="btn tablink" data-tab="watermark">Watermark Generator</button>
+        <button class="btn tablink" data-tab="info">Bot Infos</button>
+        <button class="btn tablink" data-tab="support">Support</button>
+        <button class="btn tablink" data-tab="iplookup">IP Lookup</button>
+        <button class="btn tablink" data-tab="phoneinfo">Nummer Info</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <!-- ===== HOME ===== -->
+    <section id="home" class="tab active section-bg" style="background-image:url('https://i.postimg.cc/X7Z3nzfn/Download-25.jpg');">
+      <div class="text-center py-20">
+        <h2 class="text-4xl md:text-6xl font-bold mb-4">Willkommen im BYT BOT HUB</h2>
+        <p class="text-lg md:text-xl text-gray-300">Dein Control-Center für Commands, Infos, Support und den IMG Generator</p>
+      </div>
+    </section>
+
+    <!-- ===== COMMANDS ===== -->
+    <section id="commands" class="tab section-bg" style="background-image:url('https://i.postimg.cc/MpVSQf34/Material.jpg');">
+      <div class="card">
+        <h2 class="text-2xl font-bold mb-3">📜 Commands</h2>
+        <div id="commandsList" class="commands-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ===== IMAGE GENERATOR ===== -->
+    <section id="imggen" class="tab section-bg" style="background-image:url('https://i.postimg.cc/J49805xZ/Download-24.jpg');">
+      <div class="card">
+        <h2 class="text-2xl font-bold mb-3">🖼️ BYT IMG MAKER</h2>
+        <textarea id="promptInput" placeholder="> Beschreibe dein Bild..." class="w-full h-32 p-3 bg-black border border-gray-700 rounded mb-3"></textarea>
+        <div class="flex gap-3 mb-3">
+          <button id="generateButton" class="btn">&gt; Bild generieren</button>
+          <button id="clearPrompt" class="btn">Clear</button>
+        </div>
+        <div id="loadingIndicator" class="hidden text-gray-400 font-medium mb-2">[*] Dein Bild wird generiert...</div>
+        <div id="imageContainer" class="card"> &gt; Ready </div>
+      </div>
+    </section>
+
+    <!-- ===== WATERMARK GENERATOR ===== -->
+<section id="watermark" class="tab section-bg" style="background-image:url('https://i.postimg.cc/J49805xZ/Download-24.jpg');">
+  <div class="card">
+    <h2 class="text-2xl font-bold mb-3">🖋️ IMAGE WATERMARK TOOL</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <!-- Controls -->
+      <div class="space-y-4">
+        <label class="btn w-full text-center">
+          <i class="fas fa-font"></i> UPLOAD FONT / ZIP
+          <input type="file" id="wmFontUpload" accept=".ttf,.otf,.woff,.woff2,.zip" class="hidden">
+        </label>
+        <label class="btn w-full text-center">
+          <i class="fas fa-image"></i> UPLOAD IMAGE
+          <input type="file" id="wmImageUpload" accept="image/*" class="hidden">
+        </label>
+
+        <input type="text" id="wmText" placeholder="WATERMARK TEXT" class="w-full p-2 bg-black border border-gray-700 rounded" value="SAMPLE WATERMARK">
+        <select id="wmFontSelect" class="w-full p-2 bg-black border border-gray-700 rounded">
+          <option value="Arial">Arial</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+        </select>
+        <label>Font Size</label>
+        <input type="range" id="wmFontSize" min="10" max="200" value="40" class="w-full">
+        <label>Opacity</label>
+        <input type="range" id="wmFontOpacity" min="0" max="1" step="0.01" value="0.7" class="w-full">
+
+        <div class="flex flex-wrap gap-2" id="wmColorPicker">
+          <div class="w-8 h-8 rounded cursor-pointer bg-white border-2 border-gray-200" data-color="#FFFFFF"></div>
+          <div class="w-8 h-8 rounded cursor-pointer bg-black border-2 border-gray-200" data-color="#000000"></div>
+          <div class="w-8 h-8 rounded cursor-pointer bg-red-600 border-2 border-gray-200" data-color="#FF0000"></div>
+          <div class="w-8 h-8 rounded cursor-pointer bg-green-500 border-2 border-gray-200" data-color="#00FF00"></div>
+          <div class="w-8 h-8 rounded cursor-pointer bg-blue-500 border-2 border-gray-200" data-color="#0000FF"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2" id="wmPositionSelector">
+          <button class="btn position-btn" data-position="top-left">TOP LEFT</button>
+          <button class="btn position-btn" data-position="top">TOP</button>
+          <button class="btn position-btn" data-position="top-right">TOP RIGHT</button>
+          <button class="btn position-btn" data-position="left">LEFT</button>
+          <button class="btn position-btn active" data-position="center">CENTER</button>
+          <button class="btn position-btn" data-position="right">RIGHT</button>
+          <button class="btn position-btn" data-position="bottom-left">BOTTOM LEFT</button>
+          <button class="btn position-btn" data-position="bottom">BOTTOM</button>
+          <button class="btn position-btn" data-position="bottom-right">BOTTOM RIGHT</button>
+        </div>
+
+        <button class="btn w-full" id="wmApplyBtn">APPLY WATERMARK</button>
+        <button class="btn w-full" id="wmDownloadBtn" disabled>DOWNLOAD IMAGE</button>
+      </div>
+
+      <!-- Preview -->
+      <div class="flex flex-col items-center justify-center">
+        <canvas id="wmCanvas" class="w-full border border-gray-700 rounded"></canvas>
+        <p id="wmPlaceholder" class="text-gray-400 mt-2">Upload an image to start</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INFO ===== -->
+<section id="info" class="tab section-bg" style="background-image:url('https://i.postimg.cc/HLmC4WfL/darkbild1.jpg');">
+  <div class="card space-y-4">
+    <h2 class="text-2xl font-bold mb-3">🤖 BYT BOT – Infos</h2>
+    <ul style="list-style:none;padding:0;margin:0;">
+      <li><b>Entwickler:</b> BYT Team</li>
+      <li><b>Version:</b> 2.7.1-stable</li>
+      <li><b>Entwicklungsstart:</b> 2025-3-13</li>
+      <li><b>Letztes Update:</b> 2025-08-21</li>
+      <li><b>Status:</b> Online</li>
+    </ul>
+    <hr class="border-gray-700">
+
+    <div class="space-y-2 text-gray-300 text-sm leading-relaxed">
+      <p><b>Casino & Minigames:</b> Enthält Slots, Roulette, Glücksrad, Coinflip und weitere Games.</p>
+      <p><b>Gruppen-Tools:</b> Funktionen wie Tagall, Admin-Management, AntiSpam und Welcome-Messages.</p>
+      <p><b>Support & Ticketsystem:</b> Direkter Kontakt zu Support und Verwaltung von Tickets.</p>
+      <p><b>Fun & Media:</b> Memes, GIFs, Anime, Tierbilder und mehr für Unterhaltung im Chat.</p>
+      <p><b>AI & Tools:</b> Nützliche Helfer wie Wetter, Wikipedia, QR-Codes und Übersetzer.</p>
+      <p><b>Level & Coins:</b> XP-System mit Coins, Level-Ups und Prestige-Rängen.</p>
+      <p><b>NASA & Space:</b> Live-Daten von ISS, Sonnenaktivität, Raketenstarts und Mars-Wetter.</p>
+      <p><b>NSFW & Anime:</b> Optional freischaltbare Commands für Anime & NSFW-Features.</p>
+    </div>
+
+    <p class="text-sm text-gray-400 mt-4">💡 Tipp: Schreibe <b>.menu</b> im Chat, um alle Befehle zu sehen!</p>
+  </div>
+</section>
+
+    <!-- ===== SUPPORT ===== -->
+    <section id="support" class="tab section-bg" style="background-image:url('https://i.postimg.cc/1R6mhTsw/Dark-Fantasy-Castle.jpg');">
+      <div class="card">
+        <h2 class="text-2xl font-bold mb-3">🛟 Support</h2>
+        <p>Bei Problemen erreichst du uns via: <a href="mailto:byt666@gmx.de" class="text-gray-300 hover:underline">byt666@gmx.de</a></p>
+      </div>
+    </section>
+        <!-- ===== IP LOCATOR ===== -->
+    <section id="iplookup" class="tab section-bg" style="background-image:url('https://i.postimg.cc/HLmC4WfL/darkbild1.jpg');">
+      <div class="card">
+        <h2 class="text-2xl font-bold mb-3">🌍 IP Locator</h2>
+        <input id="ipInput" type="text" placeholder="> IP-Adresse eingeben..." class="w-full p-2 mb-3 bg-black border border-gray-700 rounded">
+        <button id="ipLookupBtn" class="btn">IP suchen</button>
+        <div id="ipResult" class="mt-4 text-sm text-gray-300">> Bereit</div>
+      </div>
+    </section>
+
+    <!-- ===== PHONE INFO ===== -->
+    <section id="phoneinfo" class="tab section-bg" style="background-image:url('https://i.postimg.cc/J49805xZ/Download-24.jpg');">
+      <div class="card">
+        <h2 class="text-2xl font-bold mb-3">📱 Nummer Info</h2>
+        <input id="phoneInput" type="text" placeholder="> Telefonnummer eingeben..." class="w-full p-2 mb-3 bg-black border border-gray-700 rounded">
+        <button id="phoneLookupBtn" class="btn">Nummer prüfen</button>
+        <div id="phoneResult" class="mt-4 text-sm text-gray-300">> Bereit</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-4 py-10 text-center text-xs text-gray-500">
+    BYT BOT © 2025 
+  </footer>
+
+  <script>
+    const $ = (q)=>document.querySelector(q);
+    const $$ = (q)=>document.querySelectorAll(q);
+
+    /* ===== Tabs ===== */
+    function switchTab(id){
+      $$('.tab').forEach(n=>n.classList.remove('active'));
+      $('#'+id).classList.add('active');
+      $$('.tablink').forEach(b=>b.classList.remove('active'));
+      $$('.tablink').forEach(b=>{ if(b.dataset.tab===id){ b.classList.add('active'); } });
+    }
+    $$('.tablink').forEach(btn=>btn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      switchTab(btn.dataset.tab);
+    }));
+
+    /* ===== Commands ===== */
+    const COMMANDS = [
+      ".ping",".hi",".echo <txt>",".quote",".joke",".fact",".funfact",".name",
+      ".passwort [länge]",".farbe",".zufall",".random <min> <max>",".emoji",
+      ".slot",".poker",".gd",".bgo <zahl>",".coinflip",".roll",".calc <expr>",
+      ".wiki <suchbegriff>",".shorten <url>",".cat",".dog",".tier",".city",
+      ".art",".anime",".gif <Suchbegriff>",".dadjoke",".fortune",".motivate",
+      ".chuck",".wetter <stadt>",".reverse <Text>",".sarcasm <Text>",".uwu <Text>",
+      ".count <Wort>",".calcimg <Rechnung>",".rate <Text>",".mock <Text>",
+      ".insultme",".8ball <frage>",".play <song>",".sticker / .s",
+      ".adminlist",".members",".groupinfo",".setdesc <txt>",".setsubject <txt>",
+      ".kick @user",".promote @user",".demote @user",".warn @user [grund]",
+      ".resetwarn @user",".hidetag [txt]",".tagall <txt>",".hugall",".open",".close",
+      ".userinfo @user",".owner",".simpcheck @user",".cringecheck @user",
+      ".luckcheck @user",".suscheck @user",".waifu @user",".animal @user",
+      ".hug @user",".kiss @user",".pat @user",".slap @user",".coffee @user",".beer @user",
+      ".cookie @user",".respect @user",".slot <einsatz>",".coin <einsatz>",".jackpot <einsatz>",
+      ".dice <einsatz>",".bank",".pay @user <betrag>",".support <msg>",".ticket <id>",
+      ".apod",".launches",".iss",".neo",".solar",".earthimg <lat> <lon>",".marsweather"
+    ];
+    const cmdWrap = document.getElementById('commandsList');
+    COMMANDS.forEach(c=>{
+      const card=document.createElement('div');
+      card.className="cmd-card";
+      card.textContent=c;
+      cmdWrap.appendChild(card);
+    });
+    /* ===== IP Lookup ===== */
+    $('#ipLookupBtn')?.addEventListener('click', async ()=>{
+      const ip = $('#ipInput').value.trim();
+      if(!ip){ $('#ipResult').innerHTML = '<p style="color:red">[!] Bitte IP eingeben.</p>'; return; }
+      $('#ipResult').textContent = '[*] Suche...';
+      try {
+        const res = await fetch(`https://byt666-backend.onrender.com/api/ip/${ip}`);
+        const data = await res.json();
+        if(data.status === "fail"){
+          $('#ipResult').innerHTML = `<p style="color:red">[!] Fehler: ${data.message}</p>`;
+        } else {
+          $('#ipResult').innerHTML = `
+            ✅ <b>${data.query}</b><br>
+            🌍 ${data.country}, ${data.regionName}, ${data.city} (${data.zip})<br>
+            📡 ISP: ${data.isp} (${data.org})<br>
+            📍 Koordinaten: ${data.lat}, ${data.lon}
+          `;
+        }
+      } catch(e){
+        $('#ipResult').innerHTML = '<p style="color:red">[!] Netzwerkfehler.</p>';
+      }
+    });
+
+    /* ===== Phone Info ===== */
+    $('#phoneLookupBtn')?.addEventListener('click', async ()=>{
+      const number = $('#phoneInput').value.trim();
+      if(!number){ $('#phoneResult').innerHTML = '<p style="color:red">[!] Bitte Nummer eingeben.</p>'; return; }
+      $('#phoneResult').textContent = '[*] Suche...';
+
+      // Beispiel mit Numverify (du brauchst API-Key: https://numverify.com/)
+      try {
+        const res = await fetch(`https://byt666-backend.onrender.com/api/number/${number}`);
+        const data = await res.json();
+        if(data.valid){
+          $('#phoneResult').innerHTML = `
+            ✅ <b>${data.international_format}</b><br>
+            🌍 Land: ${data.country_name} (${data.country_code})<br>
+            📞 Carrier: ${data.carrier}<br>
+            📱 Typ: ${data.line_type}
+          `;
+        } else {
+          $('#phoneResult').innerHTML = '<p style="color:red">[!] Ungültige Nummer.</p>';
+        }
+      } catch(e){
+        $('#phoneResult').innerHTML = '<p style="color:red">[!] Netzwerkfehler.</p>';
+      }
+    });
+
+    /* ===== Image Generator (Backend) ===== */
+    const promptInput = $('#promptInput');
+    const generateButton = $('#generateButton');
+    const loadingIndicator = $('#loadingIndicator');
+    const imageContainer = $('#imageContainer');
+
+    $('#clearPrompt')?.addEventListener('click',()=>{ promptInput.value=''; });
+
+    generateButton?.addEventListener('click', async ()=>{
+      const userPrompt = promptInput.value.trim();
+      if(!userPrompt){
+        imageContainer.innerHTML = '<p style="color:red">[!] Bitte gib eine Bildbeschreibung ein.</p>';
+        return;
+      }
+      generateButton.disabled = true;
+      generateButton.textContent = '> Generating...';
+      loadingIndicator.classList.remove('hidden');
+      imageContainer.innerHTML = '';
+
+      try {
+        const r = await fetch("https://byt666-backend.onrender.com/api/generate", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ prompt: userPrompt })
+        });
+        const result = await r.json();
+        if(result.predictions?.[0]?.bytesBase64Encoded){
+          const base64 = result.predictions[0].bytesBase64Encoded;
+          const url = `data:image/png;base64,${base64}`;
+          const img = new Image();
+          img.src = url;
+          img.alt = userPrompt;
+          img.style="max-width:100%;border-radius:6px;";
+          imageContainer.appendChild(img);
+        } else {
+          imageContainer.innerHTML = '<p style="color:red">[!] Fehler beim Generieren.</p>';
+          console.warn(result);
+        }
+      } catch(e){
+        imageContainer.innerHTML = '<p style="color:red">[!] Unerwarteter Fehler.</p>';
+        console.error(e);
+      } finally {
+        generateButton.disabled = false;
+        generateButton.textContent = '> Bild generieren';
+        loadingIndicator.classList.add('hidden');
+      }
+    });
+    /* ===== WATERMARK GENERATOR ===== */
+const wmFontUpload = $('#wmFontUpload');
+const wmImageUpload = $('#wmImageUpload');
+const wmFontSelect = $('#wmFontSelect');
+const wmText = $('#wmText');
+const wmFontSize = $('#wmFontSize');
+const wmFontOpacity = $('#wmFontOpacity');
+const wmColorOptions = document.querySelectorAll('#wmColorPicker div');
+const wmPositionBtns = document.querySelectorAll('#wmPositionSelector .position-btn');
+const wmApplyBtn = $('#wmApplyBtn');
+const wmDownloadBtn = $('#wmDownloadBtn');
+const wmCanvas = $('#wmCanvas');
+const wmCtx = wmCanvas.getContext('2d');
+const wmPlaceholder = $('#wmPlaceholder');
+
+let wmSelectedColor = '#FFFFFF';
+let wmSelectedPosition = 'center';
+let wmUploadedImage = null;
+
+wmColorOptions.forEach(option => {
+  option.addEventListener('click', () => {
+    wmColorOptions.forEach(opt => opt.classList.remove('border-blue-500'));
+    option.classList.add('border-blue-500');
+    wmSelectedColor = option.dataset.color;
+    drawWatermark();
+  });
+});
+
+wmPositionBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    wmPositionBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    wmSelectedPosition = btn.dataset.position;
+    drawWatermark();
+  });
+});
+
+wmImageUpload.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    wmUploadedImage = new Image();
+    wmUploadedImage.onload = () => {
+      wmCanvas.width = wmUploadedImage.width;
+      wmCanvas.height = wmUploadedImage.height;
+      wmPlaceholder.style.display = 'none';
+      drawWatermark();
+      wmDownloadBtn.disabled = false;
+    };
+    wmUploadedImage.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+wmApplyBtn.addEventListener('click', drawWatermark);
+
+function drawWatermark() {
+  if (!wmUploadedImage) return;
+  wmCtx.clearRect(0,0,wmCanvas.width,wmCanvas.height);
+  wmCtx.drawImage(wmUploadedImage,0,0,wmCanvas.width,wmCanvas.height);
+  wmCtx.font = `bold ${wmFontSize.value}px '${wmFontSelect.value}'`;
+  wmCtx.fillStyle = wmSelectedColor;
+  wmCtx.globalAlpha = parseFloat(wmFontOpacity.value);
+  wmCtx.textAlign = 'center';
+  wmCtx.textBaseline = 'middle';
+  let x=wmCanvas.width/2, y=wmCanvas.height/2;
+  const margin=20;
+  switch(wmSelectedPosition){
+    case 'top-left': wmCtx.textAlign='left';wmCtx.textBaseline='top';x=margin;y=margin;break;
+    case 'top': wmCtx.textBaseline='top';x=wmCanvas.width/2;y=margin;break;
+    case 'top-right': wmCtx.textAlign='right';wmCtx.textBaseline='top';x=wmCanvas.width-margin;y=margin;break;
+    case 'left': wmCtx.textAlign='left';x=margin;y=wmCanvas.height/2;break;
+    case 'right': wmCtx.textAlign='right';x=wmCanvas.width-margin;y=wmCanvas.height/2;break;
+    case 'bottom-left': wmCtx.textAlign='left';wmCtx.textBaseline='bottom';x=margin;y=wmCanvas.height-margin;break;
+    case 'bottom': wmCtx.textBaseline='bottom';x=wmCanvas.width/2;y=wmCanvas.height-margin;break;
+    case 'bottom-right': wmCtx.textAlign='right';wmCtx.textBaseline='bottom';x=wmCanvas.width-margin;y=wmCanvas.height-margin;break;
+  }
+  wmCtx.fillText(wmText.value, x, y);
+  wmCtx.globalAlpha = 1;
+}
+
+wmDownloadBtn.addEventListener('click', () => {
+  if (!wmUploadedImage) return;
+  const link = document.createElement('a');
+  link.download = 'watermarked-image.png';
+  link.href = wmCanvas.toDataURL('image/png');
+  link.click();
+});
+
+  </script>
+</body>
+</html>
