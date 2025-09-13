@@ -81,6 +81,7 @@
         <button class="btn tablink" data-tab="commands">Commands</button>
         <button class="btn tablink" data-tab="imggen">IMG Generator</button>
         <button class="btn tablink" data-tab="watermark">Watermark Generator</button>
+        <button class="btn tablink" data-tab="htmleditor">HTML Editor</button>
         <button class="btn tablink" data-tab="info">Bot Infos</button>
         <button class="btn tablink" data-tab="support">Support</button>
         <button class="btn tablink" data-tab="iplookup">IP Lookup</button>
@@ -210,6 +211,23 @@
     <p class="text-sm text-gray-400 mt-4">💡 Tipp: Schreibe <b>.menu</b> im Chat, um alle Befehle zu sehen!</p>
   </div>
 </section>
+<!-- ===== HTML EDITOR ===== -->
+<section id="htmleditor" class="tab section-bg" style="background-image:url('https://i.postimg.cc/HLmC4WfL/darkbild1.jpg');">
+  <div class="card">
+    <h2 class="text-2xl font-bold mb-3">📝 HTML Editor</h2>
+    <textarea id="htmlInput" placeholder="> Dein HTML Code hier..." class="w-full h-64 p-3 bg-black border border-gray-700 rounded mb-3 font-mono text-sm"></textarea>
+    <div class="flex gap-3 mb-3">
+      <button id="validateHtmlBtn" class="btn">&gt; Check & Beautify</button>
+      <button id="clearHtmlBtn" class="btn">Clear</button>
+    </div>
+    <div id="htmlErrors" class="text-sm text-red-400 mb-3">&gt; Ready</div>
+    <iframe id="htmlPreview" class="w-full h-96 border border-gray-700 rounded bg-white"></iframe>
+  </div>
+</section>
+
+<!-- libs für htmlhint + beautify -->
+<script src="https://cdn.jsdelivr.net/npm/htmlhint@0.15.3/dist/htmlhint.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.9/js/lib/beautify-html.min.js"></script>
 
     <!-- ===== SUPPORT ===== -->
     <section id="support" class="tab section-bg" style="background-image:url('https://i.postimg.cc/1R6mhTsw/Dark-Fantasy-Castle.jpg');">
@@ -334,6 +352,43 @@
         $('#phoneResult').innerHTML = '<p style="color:red">[!] Netzwerkfehler.</p>';
       }
     });
+/* ===== HTML Editor ===== */
+const htmlInput = $('#htmlInput');
+const htmlPreview = $('#htmlPreview');
+const validateHtmlBtn = $('#validateHtmlBtn');
+const clearHtmlBtn = $('#clearHtmlBtn');
+const htmlErrors = $('#htmlErrors');
+
+validateHtmlBtn?.addEventListener('click', () => {
+  const code = htmlInput.value;
+
+  // HTMLHint check
+  const messages = HTMLHint.verify(code, { 'tag-pair': true, 'attr-lowercase': true });
+  if (messages.length > 0) {
+    htmlErrors.innerHTML = messages.map(m => `❌ [${m.line}:${m.col}] ${m.message}`).join('<br>');
+  } else {
+    htmlErrors.innerHTML = "✅ Keine Fehler gefunden";
+  }
+
+  // Beautify code
+  const pretty = html_beautify(code, { indent_size: 2 });
+  htmlInput.value = pretty;
+
+  // Live preview
+  const doc = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+  doc.open();
+  doc.write(pretty);
+  doc.close();
+});
+
+clearHtmlBtn?.addEventListener('click', () => {
+  htmlInput.value = '';
+  htmlErrors.innerHTML = '&gt; Ready';
+  const doc = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+  doc.open();
+  doc.write('');
+  doc.close();
+});
 
     /* ===== Image Generator (Backend) ===== */
     const promptInput = $('#promptInput');
