@@ -406,25 +406,38 @@
       }
     });
 /* ===== HTML Editor ===== */
-const htmlInput = $('#htmlInput');
-const htmlPreview = $('#htmlPreview');
-const validateHtmlBtn = $('#validateHtmlBtn');
-const clearHtmlBtn = $('#clearHtmlBtn');
-const htmlErrors = $('#htmlErrors');
+const htmlInput = document.querySelector('#htmlInput');
+const htmlPreview = document.querySelector('#htmlPreview');
+const validateHtmlBtn = document.querySelector('#validateHtmlBtn');
+const clearHtmlBtn = document.querySelector('#clearHtmlBtn');
+const htmlErrors = document.querySelector('#htmlErrors');
 
 validateHtmlBtn?.addEventListener('click', () => {
-  const code = htmlInput.value;
+  const code = htmlInput.value.trim();
+
+  if (!code) {
+    htmlErrors.innerHTML = "⚠️ Kein Code eingegeben!";
+    return;
+  }
 
   // HTMLHint check
-  const messages = HTMLHint.verify(code, { 'tag-pair': true, 'attr-lowercase': true });
+  const messages = HTMLHint.verify(code, { 
+    'tag-pair': true, 
+    'attr-lowercase': true,
+    'doctype-first': false,
+    'id-unique': true 
+  });
+
   if (messages.length > 0) {
-    htmlErrors.innerHTML = messages.map(m => `❌ [${m.line}:${m.col}] ${m.message}`).join('<br>');
+    htmlErrors.innerHTML = messages
+      .map(m => `❌ [${m.line}:${m.col}] ${m.message}`)
+      .join('<br>');
   } else {
     htmlErrors.innerHTML = "✅ Keine Fehler gefunden";
   }
 
   // Beautify code
-  const pretty = html_beautify(code, { indent_size: 2 });
+  const pretty = html_beautify(code, { indent_size: 2, wrap_line_length: 80 });
   htmlInput.value = pretty;
 
   // Live preview
@@ -442,6 +455,7 @@ clearHtmlBtn?.addEventListener('click', () => {
   doc.write('');
   doc.close();
 });
+
 
     /* ===== Image Generator (Backend) ===== */
     const promptInput = $('#promptInput');
