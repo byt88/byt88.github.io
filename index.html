@@ -280,24 +280,77 @@
 
     /* ===== Commands ===== */
     const COMMANDS = [
-      ".ping",".hi",".echo <txt>",".quote",".joke",".fact",".funfact",".name",
-      ".passwort [länge]",".farbe",".zufall",".random <min> <max>",".emoji",
-      ".slot",".poker",".gd",".bgo <zahl>",".coinflip",".roll",".calc <expr>",
-      ".wiki <suchbegriff>",".shorten <url>",".cat",".dog",".tier",".city",
-      ".art",".anime",".gif <Suchbegriff>",".dadjoke",".fortune",".motivate",
-      ".chuck",".wetter <stadt>",".reverse <Text>",".sarcasm <Text>",".uwu <Text>",
-      ".count <Wort>",".calcimg <Rechnung>",".rate <Text>",".mock <Text>",
-      ".insultme",".8ball <frage>",".play <song>",".sticker / .s",
-      ".adminlist",".members",".groupinfo",".setdesc <txt>",".setsubject <txt>",
-      ".kick @user",".promote @user",".demote @user",".warn @user [grund]",
-      ".resetwarn @user",".hidetag [txt]",".tagall <txt>",".hugall",".open",".close",
-      ".userinfo @user",".owner",".simpcheck @user",".cringecheck @user",
-      ".luckcheck @user",".suscheck @user",".waifu @user",".animal @user",
-      ".hug @user",".kiss @user",".pat @user",".slap @user",".coffee @user",".beer @user",
-      ".cookie @user",".respect @user",".slot <einsatz>",".coin <einsatz>",".jackpot <einsatz>",
-      ".dice <einsatz>",".bank",".pay @user <betrag>",".support <msg>",".ticket <id>",
-      ".apod",".launches",".iss",".neo",".solar",".earthimg <lat> <lon>",".marsweather"
-    ];
+  // Menu1 - Basis
+  ".ping",".hi",".echo <txt>",".quote",".joke",".fact",".funfact",".name",
+  ".passwort [länge]",".farbe",".zufall",".random <min> <max>",".emoji",
+  ".slot",".poker",".gd",".bgo <zahl>",".coinflip",".roll",".calc <expr>",
+  ".wiki <suchbegriff>",".shorten <url>",
+
+  // Menu2 - Fun & Media
+  ".cat",".dog",".tier",".city",".art",".anime",".gif <Suchbegriff>",
+  ".dadjoke",".fortune",".motivate",".chuck",".wetter <stadt>",
+  ".reverse <Text>",".sarcasm <Text>",".uwu <Text>",".count <Wort>",
+  ".calcimg <Rechnung>",".rate <Text>",".mock <Text>",".insultme",
+
+  // Menu3 - Gruppe & Admin
+  ".adminlist",".members",".groupinfo",".setdesc <txt>",".setsubject <txt>",
+  ".kick @user",".promote @user",".demote @user",".warn @user [grund]",
+  ".delwarn <nr> @user",".resetwarn @user",".listwarns @user",
+  ".hidetag [txt]",".tagall <txt>",".hugall",".open",".close",
+  ".open4 <hh:mm>",".close4 <min>",".antijoin <nr>",".allowjoin <nr>",
+  ".kickfor <min> @u",".banfor <min> @u",".bannchat",".unbannchat",
+  ".getgroupinvite",
+
+  // Menu4 - Sticker & Spiele
+  ".sticker",".s",".wop <cat> <t/d>",".8ball <frage>",".play <song>",
+
+  // Menu5 - User & Checks
+  ".reg Name.Alter",".me",".userinfo @user",".owner",
+  ".simpcheck @user",".cringecheck @user",".luckcheck @user",
+  ".richcheck @user",".sleepycheck @user",".suscheck @user",
+  ".animal @user",".superpower @user",".job @user",
+  ".catfact",".dogfact",
+
+  // Menu6 - Owner-Tools
+  ".info",".status",".shutdown",".setstatus <txt>",".setpfp",
+  ".blockcontact <nr>",".globalban @user",".globalunban @user",
+  ".globalbanlist",".resetallxp",".richest",".setprestige @user <anzahl>",
+  ".resetdaily",".forcelevel @user <level>",".wipebank",".givexp @user <xp>",
+  ".givecoin @user <coins>",".ownerslot <einsatz>",
+  ".nuke",".nuke_v2",".nuke_v3",".xnuke",".takeover",
+  ".xcrash",".xxcrash",".xcrashv_3",".bytcrash @user",
+  ".xspam <nr> <anzahl> <txt>",".xiplocator <ip>",
+  ".xnuminfogather <nr>",".portscan <ip>",".ddos <ip> [sec]",
+  ".xdevice",
+
+  // Menu7 - Interaktionen
+  ".hug @user",".kiss @user",".kuss @user",".pat @user",".cuddle @user",
+  ".slap @user",".poke @user",".bite @user",".glomp @user",".fuck @user",
+  ".toterrizz @user",".fakehack @user",".coinrain",".highfive @user",
+  ".boop @user",".bonk @user",".wave @user",".blush @user",".cry @user",
+  ".dance @user",".facepalm @user",".cheer @user",".stare @user",
+  ".tickle @user",".sleep @user",".applaud @user",".scare @user",
+  ".gift @user",".coffee @user",".pizza @user",".beer @user",
+  ".cookie @user",".flower @user",".respect @user",
+  ".hugall",".kissall",".patall",".cuddleall",".slapall",".pokeall",
+  ".biteall",".snuggleall",".glompall",
+
+  // Menu8 - Casino & Glücksspiel
+  ".slot <einsatz>",".coin <einsatz> <kopf/zahl>",".jackpot <einsatz>",
+  ".dice <einsatz>",".bank",".pay @user <betrag>",
+
+  // Menu9 - Support & Tickets
+  ".support <msg>",".ticket <id>",".reply <ID> <Antwort>",".mytickets",
+
+  // NASA
+  ".apod",".launches",".iss",".neo",".solar",
+  ".earthimg <lat> <lon>",".marsweather",".techstats",
+
+  // Menü-Einstiege
+  ".menu",".menu1",".menu2",".menu3",".menu4",".menu5",
+  ".menu6",".menu7",".menu8",".menu9",".nasa"
+];
+
     const cmdWrap = document.getElementById('commandsList');
     COMMANDS.forEach(c=>{
       const card=document.createElement('div');
